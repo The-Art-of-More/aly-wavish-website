@@ -7,6 +7,23 @@ to `main` deploys production automatically via `.github/workflows/deploy.yml`.
 
 ## One-time setup (needs a human with Vercel account access)
 
+0. **Wire the contact form (Formspree).** The form in `components/Contact.tsx`
+   posts to Formspree, which then emails the submission — no backend code,
+   no Vercel secrets.
+   - Create a free account at [formspree.io](https://formspree.io), make a
+     new form, and set its notification/recipient email to
+     `aly@theartofmore.com.au` (Formspree sends a one-time confirmation link
+     to that inbox — it must be clicked before the form works).
+   - Copy the form ID from the endpoint Formspree gives you
+     (`https://formspree.io/f/<ID>`).
+   - Set it as an env var:
+     - **Locally**: copy `.env.example` to `.env.local`, fill in
+       `NEXT_PUBLIC_FORMSPREE_FORM_ID`.
+     - **On Vercel**: project → Settings → Environment Variables → add
+       `NEXT_PUBLIC_FORMSPREE_FORM_ID` (Production + Preview).
+   - Until this is set, the form shows a friendly error pointing visitors
+     to `aly@theartofmore.com.au` directly instead of silently failing.
+
 1. **Create the Vercel project.**
    - Vercel dashboard → **Add New → Project** → import
      `The-Art-of-More/aly-wavish-website` from GitHub (or, if the native
