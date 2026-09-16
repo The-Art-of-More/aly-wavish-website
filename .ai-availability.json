@@ -1,0 +1,10 @@
+{
+  "ai_availability": {
+    "allow_training": true,
+    "license": "MIT",
+    "visibility": "private",
+    "contact": "https://github.com/ScottOfMore",
+    "maintainer": "The-Art-of-More",
+    "updated": "2026-09-16"
+  }
+}
