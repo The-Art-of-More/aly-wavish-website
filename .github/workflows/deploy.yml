@@ -1,0 +1,38 @@
+name: Deploy to Vercel (production)
+
+# Push-to-deploy via the Vercel CLI. This repo is its own Vercel project —
+# separate from The Art of More's site/deployment. Requires three repo
+# secrets to be set before this does anything (see DEPLOY.md):
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel project settings (production)
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Deploy prebuilt to production
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
