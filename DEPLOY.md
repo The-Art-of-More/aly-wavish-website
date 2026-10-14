@@ -1,69 +1,67 @@
-# Deploy — Vercel setup runbook
+# Deploy — Cloudflare Pages
 
-This is a standalone static Next.js site (no API routes, no env vars) —
-its own Vercel project, separate from The Art of More's deployment.
-Nothing is wired yet. Steps below are one-time setup; after that, a push
-to `main` deploys production automatically via `.github/workflows/deploy.yml`.
+This is a fully static site (`output: "export"` in `next.config.ts` — no
+API routes, no `next/image`), so it deploys as plain static files. No
+Vercel, no GitHub Actions, no repo secrets needed — Cloudflare Pages
+builds and deploys directly from this GitHub repo.
 
-## One-time setup (needs a human with Vercel account access)
+You can do this whole thing yourself from the Cloudflare dashboard —
+no CLI required.
 
-0. **Wire the contact form (Formspree).** The form in `components/Contact.tsx`
-   posts to Formspree, which then emails the submission — no backend code,
-   no Vercel secrets.
-   - Create a free account at [formspree.io](https://formspree.io), make a
-     new form, and set its notification/recipient email to
-     `aly@theartofmore.com.au` (Formspree sends a one-time confirmation link
-     to that inbox — it must be clicked before the form works).
-   - Copy the form ID from the endpoint Formspree gives you
-     (`https://formspree.io/f/<ID>`).
-   - Set it as an env var:
-     - **Locally**: copy `.env.example` to `.env.local`, fill in
-       `NEXT_PUBLIC_FORMSPREE_FORM_ID`.
-     - **On Vercel**: project → Settings → Environment Variables → add
-       `NEXT_PUBLIC_FORMSPREE_FORM_ID` (Production + Preview).
-   - Until this is set, the form shows a friendly error pointing visitors
-     to `aly@theartofmore.com.au` directly instead of silently failing.
+## 1. Contact form delivery (do this first)
 
-1. **Create the Vercel project.**
-   - Vercel dashboard → **Add New → Project** → import
-     `The-Art-of-More/aly-wavish-website` from GitHub (or, if the native
-     Git integration is gated for this org's plan, create an empty project
-     and skip the Git connection — the GitHub Action below deploys via
-     CLI instead, so a live Git link isn't required).
-   - Framework preset: Next.js (auto-detected). No env vars needed.
+The contact form and the footer's enquiry capture both post to Formspree.
+- Create a free form at [formspree.io](https://formspree.io), set its
+  recipient to **aly@theartofmore.com.au** (Formspree emails a one-time
+  confirmation link there — click it before the form works).
+- Copy the form ID from the endpoint Formspree gives you
+  (`https://formspree.io/f/<ID>`).
+- You'll set this as an env var in step 3 below.
 
-2. **Attach the domain** (if `alywavish.com` — inferred from the contact
-   form's `hello@alywavish.com` — is the intended domain; confirm with Aly
-   first): project → **Settings → Domains** → add it, then point its DNS
-   at Vercel per the instructions Vercel shows.
+## 2. Connect the repo
 
-3. **Get the CLI deploy working locally once**, which also produces the
-   IDs GitHub Actions needs:
-   ```bash
-   npm install -g vercel
-   vercel link        # choose the project you just created
-   cat .vercel/project.json   # → { "orgId": "...", "projectId": "..." }
-   ```
+1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages**
+   tab → **Connect to Git**.
+2. Authorize the Cloudflare GitHub App for **The-Art-of-More** org (if
+   not already done) and select the `aly-wavish-website` repo.
+3. Production branch: `main`.
 
-4. **Create a Vercel token**: dashboard → avatar → **Account Settings →
-   Tokens** → create one scoped to the team/account the project lives in.
+## 3. Build settings
 
-5. **Set the three GitHub repo secrets**:
-   ```bash
-   gh secret set VERCEL_TOKEN -R The-Art-of-More/aly-wavish-website
-   gh secret set VERCEL_ORG_ID -R The-Art-of-More/aly-wavish-website
-   gh secret set VERCEL_PROJECT_ID -R The-Art-of-More/aly-wavish-website
-   ```
-   (paste values from step 3 at the interactive prompts, or use `--body`)
+- Framework preset: **Next.js (Static HTML Export)** — Cloudflare fills
+  in the build command and output directory for you. If you set it up
+  manually instead:
+  - Build command: `npm run build`
+  - Build output directory: `out`
+- Environment variables (Settings → Environment variables, for both
+  Production and Preview):
+  - `NEXT_PUBLIC_FORMSPREE_FORM_ID` = the ID from step 1
 
-6. **Push `main`** (or re-run the workflow via Actions → Deploy to Vercel
-   → Run workflow) — first production deploy runs.
+Click **Save and Deploy**. First build takes a couple of minutes; you'll
+get a working `*.pages.dev` URL immediately — that's a real preview of
+the live site before any domain is attached.
+
+## 4. Attach the domain (alywavish.com)
+
+Domain is currently registered at **GoDaddy**.
+
+1. Pages project → **Custom domains** → **Add a custom domain** →
+   `alywavish.com` (repeat for `www.alywavish.com` if you want both).
+2. If `alywavish.com` isn't already an active zone in this Cloudflare
+   account, Cloudflare will walk you through adding it, which means
+   pointing the domain's nameservers at Cloudflare. It gives you two
+   nameserver values (e.g. `xxx.ns.cloudflare.com`) —
+   set those at **GoDaddy → DNS → Nameservers** (switch from GoDaddy's
+   default to "custom" and enter Cloudflare's two values).
+3. Nameserver changes can take anywhere from a few minutes to ~24h to
+   propagate. Once Cloudflare shows the zone as active, it auto-issues
+   SSL and the custom domain goes live on its own — no extra DNS record
+   needed beyond what Cloudflare sets up automatically.
 
 ## After that
 
-- Merge/push to `main` = production deploy, same as The Art of More's site.
-- If the Vercel project *is* connected via native Git integration instead
-  (Pro plan / personal scope), delete `.github/workflows/deploy.yml` first
-  to avoid a double-deploy on every push.
-- Contact form (`components/Contact.tsx`) is UI-only — it doesn't send
-  anywhere yet. Wire it to an inbox/CRM before calling this fully live.
+- Every push to `main` = production deploy, automatically.
+- Every other branch/PR gets its own `*.pages.dev` preview URL
+  automatically — useful for reviewing changes (like this one) before
+  they're merged to `main`.
+- No repo secrets, no GitHub Actions workflow to maintain.
