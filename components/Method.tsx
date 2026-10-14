@@ -22,6 +22,10 @@ export default function Method() {
           rebuilding her own health, and now taught directly to leaders and teams.
         </p>
 
+        <figure className="method-diagram">
+          <img src="/img/resilience-model.webp" alt="A Model for Active Resilience — a hexagon diagram mapping two cycles. The building of endurance runs inward through Aware, Paced, Curious, Resolved, Deliberate, Restorative. The generation of resolve runs outward through Grounded, Centred, Systemic, Regenerative, Adaptive, Advocating. Four entry points sit at the corners: I want to lead without burning out, I'm in crisis right now, I want to build real resilience, I want to protect what I've built." />
+        </figure>
+
         <div className="method-box">
           <div>
             <h3>
