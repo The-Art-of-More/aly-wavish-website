@@ -3,9 +3,9 @@ export default function Nav() {
     <header>
       <div className="navbar">
         <div className="menu-label">MENU ☰</div>
-        <div className="wordmark">
-          ALY <span>WAVISH</span>
-        </div>
+        <a href="#" className="wordmark-link" aria-label="Aly Wavish — home">
+          <img src="/brand/aw-wordmark-black.webp" alt="Aly Wavish" className="wordmark-logo" />
+        </a>
         <nav>
           <ul>
             <li>

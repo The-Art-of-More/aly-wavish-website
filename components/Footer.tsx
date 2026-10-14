@@ -46,9 +46,11 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <div className="wordmark">
-              ALY <span style={{ color: "var(--crimson)" }}>WAVISH</span>
-            </div>
+            <img
+              src="/brand/aw-wordmark-white.webp"
+              alt="Aly Wavish"
+              className="wordmark-logo"
+            />
             <p style={{ maxWidth: "320px", color: "#9a9a9a" }}>
               Resilience expert, coach, and creator of the re-solve Method —
               helping leaders turn pressure into practice.
