@@ -20,3 +20,11 @@ npm run dev
 ```
 npm run build
 ```
+
+Static export (`output: "export"`) — no server, no API routes. Builds
+to `out/`.
+
+## Deploy
+
+Cloudflare Pages, connected directly to this repo — no CLI, no secrets.
+See [`DEPLOY.md`](DEPLOY.md).
