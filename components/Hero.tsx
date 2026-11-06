@@ -5,7 +5,7 @@ export default function Hero() {
       <h1>
         This is <em>Aly.</em>
       </h1>
-      <div className="subline">Aspiring Resilience.</div>
+      <div className="subline">Active Resilience.</div>
 
       <div className="hero-mark">
         <svg
