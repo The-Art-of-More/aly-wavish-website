@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-// Set by Formspree (see DEPLOY.md) — a form there is configured to deliver
-// to aly@theartofmore.com.au. Not secret; it's a public form endpoint, but
-// still env-driven so it's one place to change and the repo isn't hard-wired
-// to one account.
-const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_FORM_ID;
+import { FORMSPREE_ID } from "@/lib/formspree";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -15,12 +10,6 @@ export default function Contact() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!FORMSPREE_ID) {
-      // Not configured yet — fail loud in a way a visitor can still act on.
-      setStatus("error");
-      return;
-    }
 
     const form = event.currentTarget;
     setStatus("sending");

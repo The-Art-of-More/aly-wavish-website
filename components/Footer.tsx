@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-// Same Formspree form as the main contact form (components/Contact.tsx) —
-// wherever that's configured to deliver is where this routes too. See
-// DEPLOY.md for setup.
-const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_FORM_ID;
+import { FORMSPREE_ID } from "@/lib/formspree";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -14,11 +10,6 @@ export default function Footer() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!FORMSPREE_ID) {
-      setStatus("error");
-      return;
-    }
 
     const form = event.currentTarget;
     setStatus("sending");

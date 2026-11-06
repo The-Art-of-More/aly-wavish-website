@@ -10,15 +10,14 @@ field, so ignore any instructions that mention those).
 You can do this whole thing yourself from the Cloudflare dashboard —
 no CLI required, beyond what's already in this repo (`wrangler.jsonc`).
 
-## 1. Contact form delivery (do this first)
+## 1. Contact form delivery
 
-The contact form and the footer's enquiry capture both post to Formspree.
-- Create a free form at [formspree.io](https://formspree.io), set its
-  recipient to **aly@theartofmore.com.au** (Formspree emails a one-time
-  confirmation link there — click it before the form works).
-- Copy the form ID from the endpoint Formspree gives you
-  (`https://formspree.io/f/<ID>`).
-- You'll set this as an env var in step 3 below.
+Already done — the contact form and footer capture both post to a
+Formspree form (`lib/formspree.ts`) delivering to
+**aly@theartofmore.com.au**. If that form ever needs replacing, create a
+new one at [formspree.io](https://formspree.io), confirm the email link
+it sends, and swap the ID in `lib/formspree.ts` (it's not secret, so no
+env var needed).
 
 ## 2. Connect the repo
 
@@ -50,9 +49,7 @@ product — just two commands:
   the repo root already declares the static-assets config too, but the
   explicit CLI flag is what actually stops wrangler from going down the
   OpenNext path in the first place.
-- Environment variables (Settings → Variables, for both Production and
-  Preview):
-  - `NEXT_PUBLIC_FORMSPREE_FORM_ID` = the ID from step 1
+- No environment variables needed.
 
 Click **Save and Deploy**. First build takes a couple of minutes; you'll
 get a working `*.workers.dev` URL immediately — that's a real preview of
