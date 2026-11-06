@@ -261,6 +261,30 @@ h2 {
 .two-col img {
   border-radius: 2px;
 }
+.photo-placeholder {
+  aspect-ratio: 800 / 888;
+  border-radius: 2px;
+  background: linear-gradient(160deg, var(--blush) 0%, var(--cream) 100%);
+  border: 1px solid var(--line);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid var(--crimson);
+  opacity: 0.25;
+}
+.photo-placeholder span {
+  font-family: var(--font-playfair), serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--grey);
+  letter-spacing: 0.5px;
+}
 .lead {
   font-size: 17px;
   color: #3d3d3d;
@@ -480,6 +504,20 @@ h2 {
   width: 100%;
   object-fit: cover;
   background: #ddd;
+}
+.blog-card .thumb-placeholder {
+  height: 200px;
+  width: 100%;
+  background: linear-gradient(160deg, var(--blush) 0%, var(--cream) 100%);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.blog-card .thumb-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--crimson);
+  opacity: 0.2;
 }
 .blog-card .meta {
   font-size: 11px;

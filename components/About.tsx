@@ -36,10 +36,9 @@ export default function About() {
             Meet the Resilience Matrix →
           </a>
         </div>
-        <img
-          src="https://www.re-solve.com.au/files/images/pages/516/our-founder-two.jpg?w=800&h=888&s=exact"
-          alt="Aly Wavish"
-        />
+        <div className="photo-placeholder" role="img" aria-label="Portrait of Aly Wavish — photo coming soon">
+          <span>Photo coming soon</span>
+        </div>
       </div>
     </section>
   );
