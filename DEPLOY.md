@@ -1,12 +1,14 @@
-# Deploy — Cloudflare Pages
+# Deploy — Cloudflare Workers (static assets)
 
 This is a fully static site (`output: "export"` in `next.config.ts` — no
-API routes, no `next/image`), so it deploys as plain static files. No
-Vercel, no GitHub Actions, no repo secrets needed — Cloudflare Pages
-builds and deploys directly from this GitHub repo.
+API routes, no `next/image`), so it deploys as plain static files via
+Cloudflare's Git-connected **Workers Builds** (the unified "Workers &
+Pages" product — this account's dashboard doesn't show a separate
+classic "Pages" product or a Framework preset / Build output directory
+field, so ignore any instructions that mention those).
 
 You can do this whole thing yourself from the Cloudflare dashboard —
-no CLI required.
+no CLI required, beyond what's already in this repo (`wrangler.jsonc`).
 
 ## 1. Contact form delivery (do this first)
 
@@ -20,33 +22,48 @@ The contact form and the footer's enquiry capture both post to Formspree.
 
 ## 2. Connect the repo
 
-1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages**
-   tab → **Connect to Git**.
+1. Cloudflare dashboard → **Workers & Pages** → **Create** → connect to
+   Git.
 2. Authorize the Cloudflare GitHub App for **The-Art-of-More** org (if
-   not already done) and select the `aly-wavish-website` repo.
+   not already done) and select **`The-Art-of-More/aly-wavish-website`**
+   specifically — double-check the org/repo name carefully; it's easy to
+   end up connected to the wrong repo (a stray duplicate, or one under a
+   similarly-named org) with no obvious warning, and every build will
+   silently run against the wrong source with no indication why.
 3. Production branch: `main`.
 
 ## 3. Build settings
 
-- Framework preset: **Next.js (Static HTML Export)** — Cloudflare fills
-  in the build command and output directory for you. If you set it up
-  manually instead:
-  - Build command: `npm run build`
-  - Build output directory: `out`
-- Environment variables (Settings → Environment variables, for both
-  Production and Preview):
+There's no Framework preset or Build output directory field in this
+product — just two commands:
+
+- Build command: `npm run build` (this repo's `package.json` script
+  already clears `.next`/`.open-next`/`out` before building, so a stale
+  build cache can't silently skip the static export step)
+- Deploy command: `npx wrangler deploy --assets=out --name=aly-wavish-website`
+  — the explicit `--assets` flag matters: a bare `npx wrangler deploy`
+  makes wrangler auto-detect this as a Next.js project needing the
+  OpenNext/SSR adapter (installs `@opennextjs/cloudflare`, tries to
+  deploy as a full Worker with service bindings) and fails on a
+  self-reference binding that can't resolve on a first deploy. This repo
+  has no SSR/API routes, so none of that applies — `wrangler.jsonc` in
+  the repo root already declares the static-assets config too, but the
+  explicit CLI flag is what actually stops wrangler from going down the
+  OpenNext path in the first place.
+- Environment variables (Settings → Variables, for both Production and
+  Preview):
   - `NEXT_PUBLIC_FORMSPREE_FORM_ID` = the ID from step 1
 
 Click **Save and Deploy**. First build takes a couple of minutes; you'll
-get a working `*.pages.dev` URL immediately — that's a real preview of
+get a working `*.workers.dev` URL immediately — that's a real preview of
 the live site before any domain is attached.
 
 ## 4. Attach the domain (alywavish.com)
 
 Domain is currently registered at **GoDaddy**.
 
-1. Pages project → **Custom domains** → **Add a custom domain** →
-   `alywavish.com` (repeat for `www.alywavish.com` if you want both).
+1. Worker project → **Domains & Routes** → **Add** → `alywavish.com`
+   (repeat for `www.alywavish.com` if you want both).
 2. If `alywavish.com` isn't already an active zone in this Cloudflare
    account, Cloudflare will walk you through adding it, which means
    pointing the domain's nameservers at Cloudflare. It gives you two
